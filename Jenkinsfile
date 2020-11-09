@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('checkout') {
       steps {
-        git 'ssh://git.com/prj.git'
+        git 'https://github.com/bbenammar/maven-project.git'
       }
     }
 
