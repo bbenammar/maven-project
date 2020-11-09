@@ -13,19 +13,19 @@ pipeline {
           stages{
         stage('build') {
           steps {
-            sh 'echo docker build'
+            bat 'echo docker build'
           }
         }
     stage('publish') {
       steps {
-        sh 'echo docker push'
+        bat 'echo docker push'
       }
     }
         }
         }
         stage('scan') {
           steps {
-            sh 'echo scan sonnar'
+            bat 'echo scan sonnar'
           }
         }
 
@@ -38,13 +38,13 @@ pipeline {
       parallel {
         stage('deploy to build') {
           steps {
-            sh 'echo deploy 1'
+            bat 'echo deploy 1'
           }
         }
 
         stage('deploy RE7') {
           steps {
-            sh 'echo re7'
+            bat 'echo re7'
           }
         }
 
