@@ -1,42 +1,58 @@
 pipeline {
-    agent any
-
-    parameters {
-         string(name: 'tomcat_dev', defaultValue: '35.166.210.154', description: 'Staging Server')
-         string(name: 'tomcat_prod', defaultValue: '34.209.233.6', description: 'Production Server')
+  agent any
+  stages {
+    stage('checkout') {
+      steps {
+        git 'ssh://git.com/prj.git'
+      }
     }
 
-    triggers {
-         pollSCM('* * * * *')
-     }
-
-stages{
-        stage('Build'){
-            steps {
-                sh 'mvn clean package'
-            }
-            post {
-                success {
-                    echo 'Now Archiving...'
-                    archiveArtifacts artifacts: '**/target/*.war'
-                }
-            }
+    stage('build') {
+      parallel {
+        stage('build') {
+          steps {
+            sh 'echo docker build'
+          }
         }
 
-        stage ('Deployments'){
-            parallel{
-                stage ('Deploy to Staging'){
-                    steps {
-                        sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
-                    }
-                }
-
-                stage ("Deploy to Production"){
-                    steps {
-                        sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
-                    }
-                }
-            }
+        stage('scan') {
+          steps {
+            sh 'echo scan sonnar'
+          }
         }
+
+      }
     }
+
+    stage('publish') {
+      steps {
+        sh 'echo docker push'
+      }
+    }
+
+    stage('deploy to build') {
+      parallel {
+        stage('deploy to build') {
+          steps {
+            sh 'echo deploy 1'
+          }
+        }
+
+        stage('deploy RE7') {
+          steps {
+            sh 'echo re7'
+          }
+        }
+
+      }
+    }
+
+  }
+  parameters {
+    string(name: 'tomcat_dev', defaultValue: '35.166.210.154', description: 'Staging Server')
+    string(name: 'tomcat_prod', defaultValue: '34.209.233.6', description: 'Production Server')
+  }
+  triggers {
+    pollSCM('* * * * *')
+  }
 }
