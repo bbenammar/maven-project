@@ -9,12 +9,20 @@ pipeline {
 
     stage('build') {
       parallel {
+        stage (build){
+          stages{
         stage('build') {
           steps {
             sh 'echo docker build'
           }
         }
-
+    stage('publish') {
+      steps {
+        sh 'echo docker push'
+      }
+    }
+        }
+        }
         stage('scan') {
           steps {
             sh 'echo scan sonnar'
@@ -24,11 +32,7 @@ pipeline {
       }
     }
 
-    stage('publish') {
-      steps {
-        sh 'echo docker push'
-      }
-    }
+
 
     stage('deploy to build') {
       parallel {
